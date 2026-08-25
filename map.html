@@ -142,21 +142,25 @@
   <p class="footer-hint">Carte stylisée — touche une zone colorée pour continuer</p>
 
 <script>
+  <script>
   const tg = window.Telegram.WebApp;
   tg.ready();
   tg.expand();
 
   document.querySelectorAll('.zone').forEach(zone => {
     zone.addEventListener('click', () => {
-      document.querySelectorAll('.zone').forEach(z => z.classList.remove('selected'));
-      zone.classList.add('selected');
-
       const dept = zone.getAttribute('data-dept');
-      tg.sendData(JSON.stringify({ department: dept }));
 
+      if (dept === '29') {
+        window.location.href = 'map-29.html';
+        return;
+      }
+
+      tg.sendData(JSON.stringify({ department: dept }));
       setTimeout(() => tg.close(), 150);
     });
   });
+</script>
 </script>
 
 </body>
