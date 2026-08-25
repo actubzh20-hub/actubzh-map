@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>ActuBZH 2.0 — Carte</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg-dark: #050912;
+    --bg-navy: #0d1b30;
+    --blue: #1e5f8c;
+    --blue-light: #2f8fc4;
+    --gold: #f2b632;
+    --gold-light: #ffd873;
+    --white: #f5f7fa;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 20%, var(--bg-navy) 0%, var(--bg-dark) 70%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px 40px;
+  }
+
+  h1 {
+    font-size: 22px;
+    text-align: center;
+    margin: 6px 0 2px;
+    letter-spacing: 0.5px;
+  }
+  h1 span.gold {
+    background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+  }
+
+  p.subtitle {
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #9db2c9;
+    text-align: center;
+  }
+
+  .map-wrap {
+    width: 100%;
+    max-width: 480px;
+    filter: drop-shadow(0 0 18px rgba(47, 143, 196, 0.35));
+  }
+
+  svg { width: 100%; height: auto; display: block; }
+
+  .zone {
+    fill: var(--blue);
+    stroke: var(--gold);
+    stroke-width: 2.5;
+    opacity: 0.88;
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .zone:active,
+  .zone.selected {
+    fill: var(--gold);
+    opacity: 1;
+  }
+
+  .zone-label {
+    fill: var(--white);
+    font-size: 22px;
+    font-weight: 800;
+    text-anchor: middle;
+    pointer-events: none;
+    paint-order: stroke;
+    stroke: #00000066;
+    stroke-width: 3px;
+  }
+  .zone-name {
+    fill: #cfe3f2;
+    font-size: 10px;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  .footer-hint {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #7c93ab;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+  <h1>⚓ ActuBZH <span class="gold">2.0</span> ⚓</h1>
+  <p class="subtitle">🗼 Touche ton département pour voir ses bons plans</p>
+
+  <div class="map-wrap">
+    <svg viewBox="0 0 600 560" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- 29 - Finistère -->
+      <polygon class="zone" data-dept="29"
+        points="30,240 90,150 170,140 210,220 190,320 130,380 60,340 25,280" />
+      <text class="zone-label" x="115" y="255">29</text>
+      <text class="zone-name" x="115" y="272">Finistère</text>
+
+      <!-- 22 - Côtes d'Armor -->
+      <polygon class="zone" data-dept="22"
+        points="170,140 260,90 340,120 350,210 280,250 210,220" />
+      <text class="zone-label" x="270" y="170">22</text>
+      <text class="zone-name" x="270" y="187">Côtes d'Armor</text>
+
+      <!-- 56 - Morbihan -->
+      <polygon class="zone" data-dept="56"
+        points="130,380 190,320 280,250 350,290 340,380 260,440 170,430" />
+      <text class="zone-label" x="255" y="360">56</text>
+      <text class="zone-name" x="255" y="377">Morbihan</text>
+
+      <!-- 35 - Ille-et-Vilaine -->
+      <polygon class="zone" data-dept="35"
+        points="340,120 430,110 470,190 440,280 350,290 350,210" />
+      <text class="zone-label" x="410" y="200">35</text>
+      <text class="zone-name" x="410" y="217">Ille-et-Vilaine</text>
+
+      <!-- 44 - Loire-Atlantique -->
+      <polygon class="zone" data-dept="44"
+        points="340,380 440,280 500,320 520,420 440,480 340,470" />
+      <text class="zone-label" x="430" y="390">44</text>
+      <text class="zone-name" x="430" y="407">Loire-Atlantique</text>
+
+    </svg>
+  </div>
+
+  <p class="footer-hint">Carte stylisée — touche une zone colorée pour continuer</p>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
+
+  document.querySelectorAll('.zone').forEach(zone => {
+    zone.addEventListener('click', () => {
+      document.querySelectorAll('.zone').forEach(z => z.classList.remove('selected'));
+      zone.classList.add('selected');
+
+      const dept = zone.getAttribute('data-dept');
+      tg.sendData(JSON.stringify({ department: dept }));
+
+      setTimeout(() => tg.close(), 150);
+    });
+  });
+</script>
+
+</body>
+</html>
